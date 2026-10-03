@@ -383,18 +383,37 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
-  require('tokyonight').setup {
-    styles = {
-      comments = { italic = false }, -- Disable italics in comments
-    },
-  }
+vim.pack.add {
+  gh 'RRethy/base16-nvim',
+  gh 'folke/tokyonight.nvim',
+}
 
+require('tokyonight').setup {
+  styles = {
+    comments = { italic = false },
+  },
+}
+
+local function source_matugen()
+  local matugen_path = vim.fn.stdpath 'config' .. '/generated/matugen.lua'
+
+  if vim.uv.fs_stat(matugen_path) then
+    dofile(matugen_path)
+  else
+    vim.cmd.colorscheme 'tokyonight'
+  end
+end
+
+source_matugen()
+
+vim.api.nvim_create_autocmd('Signal', {
+  pattern = 'SIGUSR1',
+  callback = source_matugen,
+})
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  -- vim.cmd.colorscheme 'tokyonight-night'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
